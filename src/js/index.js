@@ -5,8 +5,6 @@ import { h, app } from 'hyperapp'
 import risk from './risk.js'
 
 const state = {
-  attackers: 100,
-  defenders: 100,
   diceAttackers: [],
   diceDefenders: []
 }

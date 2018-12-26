@@ -1,0 +1,73 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Risiko Rechner</title>
+
+    <script type="module">
+      import risk from './risk.js'
+
+      const attackersField = document.getElementById('attackers')
+      const defendersField = document.getElementById('defenders')
+
+      const singleGameButton = document.getElementById('singleGame')
+      const completeGameButton = document.getElementById('completeGame')
+
+      const diceAttackersField = document.getElementById('diceAttackers')
+      const diceDefendersField = document.getElementById('diceDefenders')
+      const resultField = document.getElementById('result')
+
+      function setResult({
+        attackers,
+        defenders,
+        diceAttackers = [],
+        diceDefenders = [],
+        result
+      }) {
+        attackersField.value = attackers
+        defendersField.value = defenders
+        diceAttackersField.innerHTML = diceAttackers.join(' ')
+        diceDefendersField.innerHTML = diceDefenders.join(' ')
+        resultField.innerHTML = result || ''
+      }
+
+      singleGameButton.addEventListener('click', _ =>
+        setResult(
+          risk.playSingleGame({
+            attackers: attackersField.value,
+            defenders: defendersField.value
+          })
+        )
+      )
+
+      completeGameButton.addEventListener('click', _ =>
+        setResult(
+          risk.playCompleteGame({
+            attackers: attackersField.value,
+            defenders: defendersField.value
+          })
+        )
+      )
+    </script>
+  </head>
+  <body>
+    <main>
+      <h2>Input</h2>
+      <p>
+        <label>Angreifer:</label> <input id="attackers" type="number" min="0" />
+      </p>
+      <p>
+        <label>Verteidiger: </label>
+        <input id="defenders" type="number" min="0" />
+      </p>
+      <p><button id="singleGame">Einzelner Lauf</button></p>
+      <p><button id="completeGame">Bis zum Ende</button></p>
+      <h2>Letztes Würfelergebnis</h2>
+      <p>Angreifer: <span id="diceAttackers"></span></p>
+      <p>Verteidiger: <span id="diceDefenders"></span></p>
+      <h2>Ergebnis</h2>
+      <p id="result"></p>
+    </main>
+  </body>
+</html>

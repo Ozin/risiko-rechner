@@ -18,6 +18,42 @@
       const diceDefendersField = document.getElementById('diceDefenders')
       const resultField = document.getElementById('result')
 
+      const onClickSelect = field =>
+        field.addEventListener('click', _ => field.select())
+
+      onClickSelect(attackersField)
+      onClickSelect(defendersField)
+
+      const game = {
+        singleRound: _ =>
+          setResult(
+            risk.playSingleGame({
+              attackers: attackersField.value,
+              defenders: defendersField.value
+            })
+          ),
+        fullRound: _ =>
+          setResult(
+            risk.playCompleteGame({
+              attackers: attackersField.value,
+              defenders: defendersField.value
+            })
+          )
+      }
+
+      const createBar = num => {
+        let tmp = ''
+        for (let i = 0; i < num; i++) {
+          tmp += '|'
+        }
+        return tmp
+      } //[...Array(num)].map(_ => '|').join('')
+
+      const getBars = (attackers, defenders, result) =>
+        `<table><tr><td>A:</td><td>${createBar(attackers)}</td></tr>
+          <tr><td>V:</td><td>${createBar(defenders)}</td></tr></table>
+        ${result || ''}`
+
       function setResult({
         attackers,
         defenders,
@@ -29,40 +65,43 @@
         defendersField.value = defenders
         diceAttackersField.innerHTML = diceAttackers.join(' ')
         diceDefendersField.innerHTML = diceDefenders.join(' ')
-        resultField.innerHTML = result || ''
+        resultField.innerHTML = getBars(attackers, defenders, result)
       }
 
-      singleGameButton.addEventListener('click', _ =>
-        setResult(
-          risk.playSingleGame({
-            attackers: attackersField.value,
-            defenders: defendersField.value
-          })
-        )
-      )
+      singleGameButton.addEventListener('click', game.singleRound)
 
-      completeGameButton.addEventListener('click', _ =>
-        setResult(
-          risk.playCompleteGame({
-            attackers: attackersField.value,
-            defenders: defendersField.value
-          })
-        )
-      )
+      const startGame = _ => {
+        const intervalId = window.setInterval(game.singleRound, 400)
+
+        completeGameButton.innerHTML = 'Stoppe Kampf'
+        completeGameButton.addEventListener('click', stopGame(intervalId), {
+          once: true
+        })
+      }
+
+      const stopGame = intervalId => _ => {
+        window.clearInterval(intervalId)
+
+        completeGameButton.innerHTML = 'Starte Kampf'
+        completeGameButton.addEventListener('click', startGame, { once: true })
+      }
+
+      completeGameButton.addEventListener('click', startGame, { once: true })
     </script>
   </head>
   <body>
     <main>
       <h2>Input</h2>
       <p>
-        <label>Angreifer:</label> <input id="attackers" type="number" min="0" />
+        <label>Angreifer:</label>
+        <input id="attackers" type="number" min="0" value="50" />
       </p>
       <p>
         <label>Verteidiger: </label>
-        <input id="defenders" type="number" min="0" />
+        <input id="defenders" type="number" min="0" value="50" />
       </p>
       <p><button id="singleGame">Einzelner Lauf</button></p>
-      <p><button id="completeGame">Bis zum Ende</button></p>
+      <p><button id="completeGame">Starte Kampf</button></p>
       <h2>Letztes Würfelergebnis</h2>
       <p>Angreifer: <span id="diceAttackers"></span></p>
       <p>Verteidiger: <span id="diceDefenders"></span></p>

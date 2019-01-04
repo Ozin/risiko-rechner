@@ -54,6 +54,9 @@ const playCompleteGame = ({ attackers, defenders }) => {
   return result
 }
 
-const risk = { playSingleGame, playCompleteGame }
+const risk = {
+  playSingleGame,
+  playCompleteGame
+}
 
 export default risk
